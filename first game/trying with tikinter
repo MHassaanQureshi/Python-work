@@ -1,0 +1,99 @@
+from tkinter import *
+import sys
+import pygame
+import random
+root = Tk()
+def exit():
+    quit()
+def game():
+    pygame.init()
+    screen = pygame.display.set_mode((800 , 600))
+    #change title
+    pygame.display.set_caption("first game")
+    #LOGO
+    icon = pygame.image.load("icon game.png")
+    pygame.display.set_icon(icon)
+    #adding background\
+    background = pygame.image.load("background.png")
+    #adding ship
+    enemyimg = pygame.image.load("enemy.png")
+    enemyX =  random.randint(0,800)
+    enemyY =random.randint(50,150)
+    enemyX_change = 2
+    enemyY_change = 40
+
+    #Enemy
+    plyimage = pygame.image.load("ship.png")
+    plyimageX = 370
+    plyimageY = 480
+    #bullet
+    bullet = pygame.image.load("icon game.png")
+    bulletX = plyimageX
+    bulletY = plyimageY
+    bulletX_change = 0
+    bulletY_change = 10
+    bullet_state = "ready"
+
+    def player(x,y):
+        screen.blit(plyimage ,(x,y))
+
+    def enemy(x,y):
+        screen.blit(enemyimg ,(x,y))
+
+    def bullet(x,y):
+        global bullet_state
+        bullet_state = "fire"
+        screen.blit(bullet ,(x + 16 , y + 10))
+
+    #screening Loop
+    running = True
+    while running:
+        screen.fill((0,0,0))
+        screen.blit(background,(0,0))
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit() 
+                running = False
+                sys.exit()
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_RIGHT:
+                plyimageX+=4
+            if event.key == pygame.K_LEFT:
+                plyimageX-=4
+            if event.key == pygame.K_UP:
+                plyimageY-=4
+            if event.key == pygame.K_DOWN:
+                plyimageY+=4
+            if event.key == pygame.K_SPACE:
+                bullet(bulletX , bulletY)
+            
+        if plyimageX<=0:
+            plyimageX=0
+        if plyimageX>=736:
+            plyimageX=736
+        if plyimageY<=0:
+            plyimageY=0
+        if plyimageY>=536:
+            plyimageY=536
+        enemyX += enemyX_change
+        if enemyX<=0:
+            enemyX_change = 2
+            enemyY += enemyY_change
+        if enemyX>=736:
+            enemyX_change = -2
+            enemyY += enemyY_change
+        if bullet_state == "fire":
+            bullet(bulletX,bulletY)
+            bulletY -= bulletY_change
+        # change backgrond colour
+        enemy(enemyX,enemyY)
+        player(plyimageX,plyimageY)
+        #always update when working on screen
+        pygame.display.update()
+    
+    
+button = Button(root ,text = "start game" , command=game , fg="yellow" , bg="purple" ,padx=10 , pady=10 ).grid(row=1,column=0,columnspan=3)
+#button.pack()
+button2 = Button(root ,text = "QUIT" , command=exit , fg="yellow" , bg="purple" ,padx=28 , pady=10 ).grid(row=2,column=0,columnspan=3)
+#button2.pack()
+root.mainloop()
